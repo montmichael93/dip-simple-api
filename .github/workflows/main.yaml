@@ -74,8 +74,8 @@ jobs:
 
             if [$status = "Success"] ; then
                 echo "Command executed Successfully"
-              else 
+            else 
                 echo "Command failed"
                 echo "Error: "$status"
                 exit 1
-              fi
+            fi
