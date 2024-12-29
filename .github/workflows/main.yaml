@@ -69,7 +69,7 @@ jobs:
 
             echo "$status"
 
-            if ["$status" === "Success"] ; then
+            if [$status === "Success"] ; then
                 echo "Command executed Successfully"
               else 
                 echo "Command failed"
