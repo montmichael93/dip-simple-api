@@ -39,5 +39,5 @@ deploy:
   runs-on: ubuntu-24.04
   need: build
   steps:
-   -name: Echo
-    run: echo Deploying to EC2
+   - name: Echo
+    run: echo "Deploying to EC2"
