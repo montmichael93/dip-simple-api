@@ -48,4 +48,4 @@ jobs:
           id: login-aws-ecr
           uses: aws-actions/amazon-ecr-login@v2
         - name: Echo
-          run: echo ${steps.login-aws-ecr.outputs.registry}
+          run: echo ${{steps.login-aws-ecr.outputs.registry}}
