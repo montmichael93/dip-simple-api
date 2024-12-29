@@ -40,5 +40,4 @@ deploy:
   need: build
   steps:
    -name: Echo
-    run: echo "Deploying to EC2"
-    
+    run: echo Deploying to EC2
