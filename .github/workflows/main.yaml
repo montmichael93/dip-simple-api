@@ -33,6 +33,7 @@ jobs:
             docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
             docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-24.04
@@ -50,6 +51,8 @@ jobs:
           uses: aws-actions/amazon-ecr-login@v2
       #- name: Echo
           #run: echo ${{steps.login-aws-ecr.outputs.registry}}
+        - name: Check AWS CLI installation
+          run: aws --version
         - name: Deploy to EC2
           run: |
             command_id=$(aws ssm send-command \
