@@ -57,6 +57,7 @@ jobs:
             --comment "Pull Docker Image and run it" \
             --parameters {"commands":[
             "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{steps.login-aws-ecr.outputs.registry}}",
+            "docker stop api || true",
             "docker pull ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest",
             "docker run --rm -d -p 3000:3000 --name api ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
             }}"]}'\ 
@@ -75,7 +76,6 @@ jobs:
             if [$status = "Success"] ; then
               echo "Command executed Successfully"
             else 
-              echo "Command failed"
-              echo "Error: "$status"
+              echo "Command failed... get a new job"
               exit 1
             fi
