@@ -1,84 +1,84 @@
 name: Deploy
-on: 
-  push: 
+on:
+  push:
     branches: [ "main" ]
-  
+
 jobs:
   build:
     name: Build Docker Image
-    runs-on: ubuntu-24.04  
-    steps:  
-        - name: Checkout
-          uses: actions/checkout@v2    
-          
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws-region: ${{secrets.AWS_REGION}}
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{secrets.AWS_REGION}}
 
-        - name: Login into AWS ECR
-          id: login-aws-ecr
-          uses: aws-actions/amazon-ecr-login@v2
-          
-        
-        - name: Build and push the tagged docker image to ECR
-          env:
-            ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
-            ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
-            IMAGE_TAG: latest
-          run: |
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Login into AWS ECR
+      id: login-aws-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
+    - name: Build and push the tagged docker image to ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-aws-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{secrets.AWS_ECR_REPO}}
+        IMAGE_TAG: latest
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-24.04
     needs: build
     steps:
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            aws-region: ${{secrets.AWS_REGION}}
-            
-        - name: Login into AWS ECR
-          id: login-aws-ecr
-          uses: aws-actions/amazon-ecr-login@v2
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{secrets.AWS_REGION}}
+
+    - name: Login into AWS ECR
+      id: login-aws-ecr
+      uses: aws-actions/amazon-ecr-login@v2
       #- name: Echo
-          #run: echo ${{steps.login-aws-ecr.outputs.registry}}
-        - name: Deploy to EC2
-          run: |
-            command_id=$(aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceids,Values=i-08436f1e6f6348448,i-0bc755f073f096d6e" \
-            --comment "Pull Docker Image and run it" \
-            --parameters commands='[
-            "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{steps.login-aws-ecr.outputs.registry}}",
-            "docker stop api || true",
-            "docker pull ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest",
-            "docker run --rm -d -p 3000:3000 --name api ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
-            ]' --query "Command.CommandId" --output text)
- 
-    
+      #run: echo ${{steps.login-aws-ecr.outputs.registry}}
+    - name: Deploy to EC2
+      run: |
+        command_id=$(aws ssm send-command \
+        --document-name "AWS-RunShellScript" \
+        --targets "Key=instanceids,Values=i-08436f1e6f6348448,i-0bc755f073f096d6e" \
+        --comment "Pull Docker Image and run it" \
+        --parameters commands='[
+        "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{steps.login-aws-ecr.outputs.registry}}",
+        "docker stop api || true",
+        "docker pull ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest",
+        "docker run --rm -d -p 3000:3000 --name api ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
+        ]' --query "Command.CommandId" --output text)
 
-            aws ssm wait command-executed \
-            --command-id "$command_id" \
-            --instance-id i-08436f1e6f6348448 || true
+        echo "$command_id"
 
-            status=$(aws ssm list-commands --command-id $command_id --query "Commands[0].statusDetails" --output text)
+        aws ssm wait command-executed \
+        --command-id "$command_id" \
+        --instance-id i-08436f1e6f6348448 || true
 
-            echo "CommandId Debugging: $command_id"
+        status=$(aws ssm list-commands \
+        --command-id "0a7f43ae-071d-4ace-9e7d-e561a47c5b8d" \
+        --query "Commands[0].StatusDetails" \
+        --output text)
 
-            
+        echo "Retrieved Status: $status"
 
-            if [$status = "Success"]; then
-              echo "Command executed Successfully"
-            else 
-              echo "Command failed... get a new job"
-              exit 1
-            fi
+
+
+        if [$status = "Success"]; then
+          echo "Command executed Successfully"
+        else 
+          echo "Command failed... get a new job"
+          exit 1
+        fi
