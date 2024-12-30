@@ -72,7 +72,7 @@ jobs:
 
             status=$(aws ssm list-commands --command-id $command_id --query "Commands[0].statusDetails" --output text)
 
-            echo "Status Debugging: $status"
+            echo "CommandId Debugging: $command_id"
 
             
 
