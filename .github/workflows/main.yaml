@@ -61,22 +61,15 @@ jobs:
         "docker run --rm -d -p 3000:3000 --name api ${{steps.login-aws-ecr.outputs.registry}}/${{secrets.AWS_ECR_REPO}}:latest"
         ]' --query "Command.CommandId" --output text)
 
-        echo "$command_id"
-
         aws ssm wait command-executed \
         --command-id "$command_id" \
         --instance-id i-08436f1e6f6348448 || true
 
-        status=$(aws ssm list-commands \
-        --command-id "0a7f43ae-071d-4ace-9e7d-e561a47c5b8d" \
-        --query "Commands[0].StatusDetails" \
-        --output text)
+        status=$(aws ssm list-commands --command-id "$command_id" --query "Commands[0].statusDetails" --output text)
 
         echo "Retrieved Status: $status"
 
-
-
-        if [$status = "Success"]; then
+        if [ $status == "Success" ]; then
           echo "Command executed Successfully"
         else 
           echo "Command failed... get a new job"
