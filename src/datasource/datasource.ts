@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { TodoEntity } from '../todos/todos.entity';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -19,7 +20,8 @@ const dataSource = new DataSource({
           },
         }
       : null,
-  entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
+  //entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
+  entities: [TodoEntity], // Use explicit reference instead of glob pattern
   migrations: [`${__dirname}/../migrations/*{.ts,.js}`],
 });
 

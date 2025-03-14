@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 import { Global, Module } from '@nestjs/common';
 import dataSource from './datasource';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Global()
 @Module({
@@ -16,6 +19,10 @@ import dataSource from './datasource';
           return dataSource;
         } catch (error) {
           console.log('Error connecting to database');
+          //console.log(process.env.DB_HOST);
+          //console.log(process.env.DB_USERNAME);
+          //console.log(process.env.DB_PASSWORD);
+
           throw error;
         }
       },

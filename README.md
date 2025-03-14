@@ -37,20 +37,28 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 <<<<<<< HEAD
+
 ## Project setup
+
 =======
+
 ## Installation
->>>>>>> origin/database
+
+> > > > > > > origin/database
 
 ```bash
 $ npm install
 ```
 
 <<<<<<< HEAD
+
 ## Compile and run the project
+
 =======
+
 ## Running the app
->>>>>>> origin/database
+
+> > > > > > > origin/database
 
 ```bash
 # development
@@ -64,10 +72,14 @@ $ npm run start:prod
 ```
 
 <<<<<<< HEAD
+
 ## Run tests
+
 =======
+
 ## Test
->>>>>>> origin/database
+
+> > > > > > > origin/database
 
 ```bash
 # unit tests
@@ -81,6 +93,7 @@ $ npm run test:cov
 ```
 
 <<<<<<< HEAD
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
@@ -108,7 +121,9 @@ Check out a few resources that may come in handy when working with NestJS:
 - Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
 =======
->>>>>>> origin/database
+
+> > > > > > > origin/database
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
@@ -116,10 +131,10 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## Stay in touch
 
 <<<<<<< HEAD
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-=======
+
+- # Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
 - Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
->>>>>>> origin/database
+  > > > > > > > origin/database
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
 
@@ -129,4 +144,5 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 =======
 Nest is [MIT licensed](LICENSE).
->>>>>>> origin/database
+
+> > > > > > > origin/database
